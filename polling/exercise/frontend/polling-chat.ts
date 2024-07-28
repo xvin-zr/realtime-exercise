@@ -1,4 +1,4 @@
-const chat = document.getElementById('chat');
+const chat = document.getElementById('chat') as HTMLFormElement;
 const msgs = document.getElementById('msgs') as HTMLUListElement;
 
 // let's store all current messages here
@@ -40,7 +40,6 @@ async function getNewMsgs() {
     }
     allChat = json?.msg;
     render();
-    setTimeout(getNewMsgs, INTERVAL);
 }
 
 function render() {
@@ -56,5 +55,14 @@ function render() {
 const template = (user: string, msg: string) =>
     `<li class="collection-item"><span class="badge">${user}</span>${msg}</li>`;
 
-// make the first request
-getNewMsgs();
+let timeToMakeNextReq = 0;
+async function rafTimer(time: number) {
+    if (timeToMakeNextReq <= time) {
+        await getNewMsgs();
+        timeToMakeNextReq = performance.now() + INTERVAL;
+    }
+
+    requestAnimationFrame(rafTimer);
+}
+
+requestAnimationFrame(rafTimer);
