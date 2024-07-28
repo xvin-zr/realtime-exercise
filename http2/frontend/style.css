@@ -11,3 +11,9 @@ h1 {
 .btn-box {
   text-align: center;
 }
+
+#presence-indicator {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+}

@@ -4,7 +4,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import handler from 'serve-handler';
 import nanobuffer from 'nanobuffer';
-// import cors from 'cors';
 
 let connections = [];
 
@@ -35,6 +34,28 @@ const server = http2.createSecureServer({
  * Code goes here
  *
  */
+
+server.on('stream', function (stream, headers) {
+    const path = headers[':path'];
+    const method = headers[':method'];
+
+    // streams open for every request from the browser
+    if (path === '/msgs' && method === 'GET') {
+        // immediately reply with 200 ok and the encoding
+        console.log('connected a stream', stream.id);
+        stream.respond({
+            ':status': 200,
+            'content-type': 'text/plain; charset=utf-8',
+        });
+
+        // write the first response
+        stream.write(JSON.stringify({ msg: getMsgs() }));
+
+        stream.on('close', function () {
+            console.log('closing stream', stream.id);
+        });
+    }
+});
 
 server.on('request', async (req, res) => {
     const path = req.headers[':path'];
