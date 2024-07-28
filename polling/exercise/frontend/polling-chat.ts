@@ -13,8 +13,14 @@ const baseUrl = `http://localhost:${PORT}`;
 // a submit listener on the form in the HTML
 chat.addEventListener('submit', function (e) {
     e.preventDefault();
-    postNewMsg(chat.elements.user.value, chat.elements.text.value);
-    chat.elements.text.value = '';
+
+    const userInput = (chat.elements.namedItem('user') as HTMLInputElement)
+        .value;
+    const textInput = (chat.elements.namedItem('text') as HTMLInputElement)
+        .value;
+
+    postNewMsg(userInput, textInput);
+    (chat.elements.namedItem('text') as HTMLInputElement).value = '';
 });
 
 async function postNewMsg(user: string, text: string) {
@@ -35,11 +41,17 @@ async function getNewMsgs() {
     try {
         const res = await fetch(`${baseUrl}/poll`);
         var json = await res.json();
+
+        if (res.status >= 400) {
+            throw new Error('request did not succeed:' + res.status);
+        }
+        allChat = json?.msg;
+        render();
+        failedTries = 0;
     } catch (err) {
         console.error('polling error', err);
+        failedTries++;
     }
-    allChat = json?.msg;
-    render();
 }
 
 function render() {
@@ -55,14 +67,17 @@ function render() {
 const template = (user: string, msg: string) =>
     `<li class="collection-item"><span class="badge">${user}</span>${msg}</li>`;
 
+const BACKOFF = 5_000;
+let failedTries = 0;
 let timeToMakeNextReq = 0;
-async function rafTimer(time: number) {
+const rafTimer: FrameRequestCallback = async function rafTimer(time) {
     if (timeToMakeNextReq <= time) {
         await getNewMsgs();
-        timeToMakeNextReq = performance.now() + INTERVAL;
+        timeToMakeNextReq =
+            performance.now() + INTERVAL + failedTries * BACKOFF;
     }
 
     requestAnimationFrame(rafTimer);
-}
+};
 
 requestAnimationFrame(rafTimer);
