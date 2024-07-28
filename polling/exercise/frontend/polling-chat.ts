@@ -57,9 +57,7 @@ async function getNewMsgs() {
 function render() {
     // as long as allChat is holding all current messages, this will render them
     // into the ui. yes, it's inefficent. yes, it's fine for this example
-    const html = allChat.map(({ user, text, time, id }: Chat) =>
-        template(user, text, time, id)
-    );
+    const html = allChat.map(({ user, text }) => template(user, text));
     msgs.innerHTML = html.join('\n');
 }
 
