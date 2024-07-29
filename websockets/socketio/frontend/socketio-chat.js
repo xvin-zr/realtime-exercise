@@ -1,23 +1,15 @@
+import io from 'socket.io-client';
+
 const chat = document.getElementById('chat');
 const msgs = document.getElementById('msgs');
 const presence = document.getElementById('presence-indicator');
 let allChat = [];
 
-const socket = io('http://localhost:8080');
-
-socket.on('connect', () => {
-    console.log('connected');
-    presence.innerText = '🟢';
-});
-
-socket.on('disconnect', () => {
-    presence.innerText = '🔴';
-});
-
-socket.on('msg:get', (data) => {
-    allChat = data.msg;
-    render();
-});
+/*
+ *
+ * Code goes here
+ *
+ */
 
 chat.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -26,12 +18,11 @@ chat.addEventListener('submit', function (e) {
 });
 
 async function postNewMsg(user, text) {
-    const data = {
-        user,
-        text,
-    };
-
-    socket.emit('msg:post', data);
+    /*
+     *
+     * Code goes here
+     *
+     */
 }
 
 function render() {
