@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-function generateAcceptValue(acceptKey: string) {
+function generateAcceptValue(acceptKey = '') {
     return (
         crypto
             .createHash('sha1')

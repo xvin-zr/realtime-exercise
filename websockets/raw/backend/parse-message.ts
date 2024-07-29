@@ -1,4 +1,6 @@
-function parseMessage(buffer: Buffer) {
+function parseMessage(
+    buffer: Buffer
+): Record<string, unknown> | undefined | null {
     const firstByte = buffer.readUInt8(0);
     const opCode = firstByte & 0xf;
 
