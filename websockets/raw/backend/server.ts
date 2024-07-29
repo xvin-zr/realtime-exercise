@@ -9,12 +9,6 @@ import generateAcceptValue from './generate-accept-value.ts';
 import parseMessage from './parse-message.ts';
 import internal from 'node:stream';
 
-type Msg = {
-    user: string;
-    text: string;
-    time: number;
-};
-
 let connections: internal.Duplex[] = [];
 const msg = new nanobuffer(50) as Msg[];
 const getMsgs = () => Array.from(msg).reverse();
